@@ -4,6 +4,8 @@ plugins {
 }
 
 android {
+    apply from: 'keystore/debug.gradle', to: android
+    apply from: 'keystore/release.gradle', to: android
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 
@@ -20,9 +22,12 @@ android {
     dataBinding {
         enabled true
     }
-
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
