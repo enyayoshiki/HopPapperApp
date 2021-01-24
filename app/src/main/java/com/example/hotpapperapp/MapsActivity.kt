@@ -41,7 +41,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val viewModel: MapViewModel by viewModels {
         ViewModelFactory(
-            API_BASE_URL,
             lifecycleScope)
     }
 

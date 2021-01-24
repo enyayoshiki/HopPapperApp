@@ -75,8 +75,6 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
-
-
-
-
+    // OkHttp3
+    implementation "com.squareup.okhttp3:logging-interceptor:4.8.1"
 }

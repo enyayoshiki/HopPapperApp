@@ -9,11 +9,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MapViewModel(
-    instanceId: String,
     private val coroutineScope: CoroutineScope)
     : ViewModel(){
 
-    private val repository = HotPapperRepository(instanceId)
+    private val repository = HotPapperRepository()
     var isLoading = MutableLiveData<Boolean>(false)
     var itemList = MutableLiveData<MutableList<Shop>>()
 
@@ -23,9 +22,8 @@ class MapViewModel(
 
             val itemListSnapshot = itemList.value ?: mutableListOf()
 
-            val itemListResponse = repository.fetchPublicTimeline()
-
-            itemList.postValue(itemListResponse as MutableList<Shop>?)
+            val shops: List<Shop> = repository.fetchPublicTimeline().results.shop
+            itemList.postValue(shops.toMutableList())
             isLoading.postValue(false)
         }
     }

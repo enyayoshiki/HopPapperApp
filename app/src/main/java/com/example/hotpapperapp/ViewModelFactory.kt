@@ -7,12 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 
 class ViewModelFactory(
-    private val instanceUrl: String,
     private val coroutineScope: CoroutineScope
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MapViewModel(
-            instanceUrl,
             coroutineScope) as T
     }
 }
