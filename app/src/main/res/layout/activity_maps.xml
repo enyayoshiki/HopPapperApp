@@ -59,13 +59,13 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/restaurant_viewPager_map"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="40dp"
-        android:background="@color/white"/>
+        />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

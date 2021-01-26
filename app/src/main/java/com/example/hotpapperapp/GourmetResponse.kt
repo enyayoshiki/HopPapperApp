@@ -95,8 +95,9 @@ data class Shop(
     var otherMemo: String,
     @Json(name = "parking")
     var parking: String,
-    @Json(name = "party_capacity")
-    var partyCapacity: Int,
+    //新宿 檸檬 レモン 新宿店の値が無く、nullになるため。
+//    @Json(name = "party_capacity")
+//    var partyCapacity: Int,
     @Json(name = "pet")
     var pet: String,
     @Json(name = "photo")

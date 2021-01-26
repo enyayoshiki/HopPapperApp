@@ -14,16 +14,14 @@ class MapViewModel(
 
     private val repository = HotPapperRepository()
     var isLoading = MutableLiveData<Boolean>(false)
-    var itemList = MutableLiveData<MutableList<Shop>>()
+    var itemList = MutableLiveData<List<Shop>>()
 
     fun loadNext(){
         coroutineScope.launch {
             isLoading.postValue(true)
 
-            val itemListSnapshot = itemList.value ?: mutableListOf()
-
-            val shops: List<Shop> = repository.fetchPublicTimeline().results.shop
-            itemList.postValue(shops.toMutableList())
+            val shops = repository.fetchPublicTimeline().results.shop
+            itemList.postValue(shops)
             isLoading.postValue(false)
         }
     }
