@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.hotpapperapp.MapViewModel"/>
+            type="com.example.hotpapperapp.MainViewModel"/>
     </data>
 
 

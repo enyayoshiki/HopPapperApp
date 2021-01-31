@@ -114,8 +114,8 @@ data class Shop(
     var smallArea: SmallArea,
     @Json(name = "station_name")
     var stationName: String,
-    @Json(name = "sub_genre")
-    var subGenre: SubGenre,
+//    @Json(name = "sub_genre")
+//    var subGenre: SubGenre,
     @Json(name = "tatami")
     var tatami: String,
     @Json(name = "tv")

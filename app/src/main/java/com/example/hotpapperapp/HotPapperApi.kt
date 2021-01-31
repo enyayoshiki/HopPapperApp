@@ -4,6 +4,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface HotPapperApi  {
+    //http://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=530e8b6a0cbf2e93&large_area=Z011
     // hotpepper/gourmet/v1
     // ?key=530e8b6a0cbf2e93&large_area=Z011&format=json
     @GET("hotpepper/gourmet/v1")

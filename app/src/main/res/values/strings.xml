@@ -3,4 +3,18 @@
     <string name="title_activity_maps">Map</string>
     <string name="back_button">＜ 戻る</string>
     <string name="title_map">GurunaviMap</string>
+    <string name="hint_reserach">店名・キーワードで探す</string>
+    <string name="cancel_button">キャンセル</string>
+    <string name="research_near_shop">近くの飲食店を探す</string>
+    <string name="title_research_detail">条件から探す</string>
+    <string name="hint_where">エリア・駅</string>
+    <string name="hint_category">ジャンル</string>
+    <string name="hint_when">日付</string>
+    <string name="hint_time">何時</string>
+    <string name="hint_member">何人</string>
+    <string name="hint_room">個室有り</string>
+    <string name="title_recommended">本日のおすすめ</string>
+    <string name="title_home">Home</string>
+    <string name="title_near">近所を検索</string>
+    <string name="title_favorite">お気に入り</string>
 </resources>

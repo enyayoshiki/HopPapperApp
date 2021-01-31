@@ -1,22 +1,20 @@
 package com.example.hotpapperapp
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hotpapperapp.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -24,29 +22,32 @@ import com.google.android.gms.maps.model.MarkerOptions
 import timber.log.Timber
 
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsFragment : Fragment(R.layout.activity_maps)  {
 
     private lateinit var mMap: GoogleMap
     private val MY_PERMISSION_REQUEST_FINE_LOCATION = 1
     private lateinit var binding: ActivityMapsBinding
 
-    private lateinit var customAdapter: RestaurantMapRecycerViewAdapter
-
-    private val viewModel: MainViewModel by viewModels {
+    private val viewModel: MainViewModel by activityViewModels {
         ViewModelFactory(
             lifecycleScope
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    private lateinit var customAdapter: RestaurantMapRecycerViewAdapter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        MapsActivity.startMapsActivity(requireContext())
 
         Timber.i("Test")
         val itemListSnapshot = viewModel.itemList.value ?: listOf<Shop>().also {
             viewModel.itemList.value = it
         }
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
+        binding = DataBindingUtil.bind(view) ?: return
         customAdapter = RestaurantMapRecycerViewAdapter()
 
 
@@ -65,42 +66,68 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        //SupportMapFragmentを設定
+        initMap()
 
 
 
         binding.apply {
             viewModel = viewModel
             customAdapter.refresh(itemListSnapshot.toMutableList())
-            lifecycleOwner = this@MapsActivity
+            lifecycleOwner = requireActivity()
         }
 
 
+        viewModel.apply {
+            loadNext()
+            itemList.observe(
+                requireActivity(),
+                Observer { customAdapter.refresh(it.toMutableList()) })
+        }
 
 
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun initMap() {
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            //layoutファイルを設定し、マップを立ち上げる
+            .add(R.id.map, SupportMapFragment.newInstance().apply {
+                //Mapの準備、完成次第、パーミッションを選択させる
+                getMapAsync {
+                    mMap = it
+                    checkPermission()
+                    mMap.setOnMarkerClickListener { marker ->
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 17F))
+                        return@setOnMarkerClickListener true
+                    }
+                }
+            })
+            .commit()
     }
 
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        checkPermission()
-        mMap.setOnMarkerClickListener { marker ->
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 17F))
-            return@setOnMarkerClickListener true
+
+    //位置情報取得の許可を得る
+    private fun checkPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //許可を得たら、マップの描写を変更、現在地をカメラに設定させる
+            myLocation()
+        } else {
+            requestLocationPermissions()
         }
     }
 
+    //現在地の設定、現在地取得ボタンなどUIを変更させる
     private fun myLocation() {
         Timber.i("Timber")
 
         if (ActivityCompat.checkSelfPermission(
-                this,
+                requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -109,59 +136,54 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //            val resources: Resources = this.resources
 //            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_baseline_pin_drop_24)
 
-            mMap.isMyLocationEnabled = true
-            mMap.uiSettings.isMyLocationButtonEnabled = true
-            mMap.uiSettings.isZoomControlsEnabled = true
-            mMap.addMarker(
-                MarkerOptions()
-                    .title("大阪駅")
-                    .snippet("JR西日本 大阪環状線の駅")
-                    .position(position)
-                    .alpha(1.0f)
-                    .rotation(0.0f)
-                    .draggable(false)
-                    .flat(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+            mMap.apply {
+                isMyLocationEnabled = true
+                uiSettings.apply {
+                    isMyLocationButtonEnabled = true
+                    isZoomControlsEnabled = true
+                }
+                addMarker(
+                    MarkerOptions()
+                        .title("大阪駅")
+                        .snippet("JR西日本 大阪環状線の駅")
+                        .position(position)
+                        .alpha(1.0f)
+                        .rotation(0.0f)
+                        .draggable(false)
+                        .flat(false)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
 //                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_pin_drop_24))
-                    .zIndex(2.0f)
-            )
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 17F))
+                        .zIndex(2.0f))
+                animateCamera(CameraUpdateFactory.newLatLngZoom(position, 17F))
+            }
         }
     }
 
 
-    private fun checkPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            myLocation()
-        } else {
-            requestLocationPermissions()
-        }
-    }
 
+
+    //パーミッション処理の内部
     private fun requestLocationPermissions() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
+                requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
         ) {
             ActivityCompat.requestPermissions(
-                this,
+                requireActivity(),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSION_REQUEST_FINE_LOCATION
             )
         } else {
             ActivityCompat.requestPermissions(
-                this,
+                requireActivity(),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSION_REQUEST_FINE_LOCATION
             )
         }
     }
 
+    //パーミッションを設定したあとに現在地情報を引き渡す
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -181,14 +203,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showToast(msg: String) {
-        val toast = Toast.makeText(this, msg, Toast.LENGTH_LONG)
+        val toast = Toast.makeText(requireActivity(), msg, Toast.LENGTH_LONG)
         toast.show()
     }
 
     companion object {
-        fun startMapsActivity(context: Context) {
-            val intent = Intent(context, MapsActivity::class.java)
-            context.startActivity(intent)
+
+
+        fun newInstance(): MapsFragment {
+            return MapsFragment()
         }
     }
 }

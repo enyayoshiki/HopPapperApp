@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/icon_food"
+        android:title="food" />
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/icon_pin"
+        android:title="pin"/>
+
+</menu>
