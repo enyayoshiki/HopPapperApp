@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.hotpapperapp.databinding.ActivityMainBinding
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.tabs.TabLayout
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
 
         //View(binding)とViewModelの設定
         setBindig()
@@ -66,7 +67,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
+    private fun chaneViewPagerSwipe(isEnable: Boolean) {
+        val viewPager2 = ViewPager2(this)
+        viewPager2.isUserInputEnabled = isEnable
+    }
 
     //ViewPagerの設定
     private fun setViewPagerAdapter() {
@@ -96,10 +100,10 @@ class MainActivity : AppCompatActivity() {
     //CandidateFragmentの生成
     private fun setCandidateFragment() {
 
-        val firstFragment = CandidateResearchFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.viewPager_container, firstFragment)
-        fragmentTransaction.commit()
+//        val firstFragment = CandidateResearchFragment()
+//        val fragmentTransaction = supportFragmentManager.beginTransaction()
+//        fragmentTransaction.add(R.id.viewPager_container, firstFragment)
+//        fragmentTransaction.commit()
     }
 
 

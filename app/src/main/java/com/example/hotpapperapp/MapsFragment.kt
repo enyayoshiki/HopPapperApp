@@ -12,6 +12,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.hotpapperapp.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -61,6 +63,12 @@ class MapsFragment : Fragment(R.layout.activity_maps)  {
                 clipToPadding = false
             }
             adapter = customAdapter
+            registerOnPageChangeCallback(object  : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    Timber.d("onPageSelected position:$position")
+                }
+            })
 
             Timber.i("Timber")
         }
@@ -101,6 +109,7 @@ class MapsFragment : Fragment(R.layout.activity_maps)  {
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 17F))
                         return@setOnMarkerClickListener true
                     }
+                    mMap.setPadding(0, 0, 0, 400)
                 }
             })
             .commit()
